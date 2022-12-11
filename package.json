@@ -1,9 +1,14 @@
 {
-  "name": "@sparticuz/chromium",
+  "name": "@lidio601/chromium",
   "version": "109.0.0",
   "author": {
     "name": "Kyle McNally"
   },
+  "contributors": [
+    {
+      "name": "Fabio Cigliano"
+    }
+  ],
   "license": "MIT",
   "description": "Chromium Binary for Serverless Platforms",
   "main": "build/index.js",
@@ -29,12 +34,12 @@
     "typescript": "^4.8.3"
   },
   "bugs": {
-    "url": "https://github.com/Sparticuz/chromium/issues"
+    "url": "https://github.com/lidio601/chromium/issues"
   },
-  "homepage": "https://github.com/Sparticuz/chromium",
+  "homepage": "https://github.com/lidio601/chromium",
   "repository": {
     "type": "git",
-    "url": "git://github.com/Sparticuz/chromium.git"
+    "url": "git://github.com/lidio601/chromium.git"
   },
   "keywords": [
     "aws",
