@@ -1,4 +1,4 @@
-import { createReadStream, createWriteStream, existsSync } from 'fs';
+import { createReadStream, createWriteStream, existsSync, unlinkSync } from 'fs';
 import { tmpdir } from 'os';
 import { basename, join } from 'path';
 import { extract } from 'tar-fs';
@@ -38,10 +38,18 @@ class LambdaFS {
       }
 
       source.once('error', (error: Error) => {
+        if (existsSync(output)) {
+          unlinkSync(output)
+        }
+
         return reject(error);
       });
 
       target.once('error', (error: Error) => {
+        if (existsSync(output)) {
+          unlinkSync(output)
+        }
+
         return reject(error);
       });
 
