@@ -179,7 +179,7 @@ class Chromium {
    * Inflates the current version of Chromium and returns the path to the binary.
    * If not running on AWS Lambda nor Google Cloud Functions, `null` is returned instead.
    */
-  static get executablePath(): Promise<string> {
+  static inflateChromium(archivePath?: string): Promise<string> {
     if (existsSync('/tmp/chromium') === true) {
       for (const file of readdirSync('/tmp')) {
         if (file.startsWith('core.chromium') === true) {
@@ -190,7 +190,8 @@ class Chromium {
       return Promise.resolve('/tmp/chromium');
     }
 
-    const input = join(__dirname, '..', 'bin');
+    const input = archivePath ?? join(__dirname, '..', 'bin');
+
     const promises = [
       LambdaFS.inflate(`${input}/chromium.br`),
       LambdaFS.inflate(`${input}/swiftshader.tar.br`),
@@ -201,6 +202,10 @@ class Chromium {
     }
 
     return Promise.all(promises).then((result) => result.shift());
+  }
+
+  static get executablePath(): string {
+    return '/tmp/chromium'
   }
 
   /**
