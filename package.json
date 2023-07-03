@@ -15,7 +15,8 @@
   "types": "build/index.d.ts",
   "files": [
     "bin",
-    "build"
+    "build",
+    "layer"
   ],
   "scripts": {
     "test": "make clean && make && make pretest && make test",
