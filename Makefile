@@ -18,10 +18,10 @@ test:
 	mkdir -p nodejs
 	npm install --prefix nodejs/ tar-fs@2.1.1 --bin-links=false --fund=false --omit=optional --omit=dev --package-lock=false --save=false
 	npm pack
-	mkdir -p nodejs/node_modules/@sparticuz/chromium/
-	tar --directory nodejs/node_modules/@sparticuz/chromium/ --extract --file sparticuz-chromium-*.tgz --strip-components=1
+	mkdir -p nodejs/node_modules/@lidio601/chromium/
+	tar --directory nodejs/node_modules/@lidio601/chromium/ --extract --file lidio601-chromium-*.tgz --strip-components=1
 	npx clean-modules --directory nodejs --include "**/*.d.ts" "**/@types/**" "**/*.@(yaml|yml)" --yes
-	rm sparticuz-chromium-*.tgz
+	rm lidio601-chromium-*.tgz
 	mkdir -p $(dir $@)
 	zip -9 --filesync --move --recurse-paths $@ nodejs
 
