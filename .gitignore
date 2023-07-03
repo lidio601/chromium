@@ -10,3 +10,4 @@ nodejs
 package-lock.json
 _/amazon/samconfig.toml
 _/amazon/.aws-sam
+.DS_Store
