@@ -12,10 +12,11 @@ For Playwright-specific bugs, please refer to: https://github.com/microsoft/play
 -->
 
 ## Environment
-* `chromium` Version:
-* `puppeteer` / `puppeteer-core` Version:
-* Node.js Version: <!-- 14.x | 16.x -->
-* Lambda / GCF Runtime: <!-- `nodejs8.10` | `nodejs10.x` | `nodejs12.x` -->
+
+- `chromium` Version:
+- `puppeteer` / `puppeteer-core` Version:
+- Node.js Version: <!-- 16.x | 18.x -->
+- Lambda / GCF Runtime: <!-- `nodejs16` | `nodejs18.x` -->
 
 ## Expected Behavior
 
@@ -41,7 +42,7 @@ exports.handler = async (event, context, callback) => {
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });

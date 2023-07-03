@@ -15,8 +15,9 @@ test:
 
 %.zip:
 	npm install --fund=false --package-lock=false
+	npm run build
 	mkdir -p nodejs
-	npm install --prefix nodejs/ tar-fs@2.1.1 --bin-links=false --fund=false --omit=optional --omit=dev --package-lock=false --save=false
+	npm install --prefix nodejs/ tar-fs@2.1.1 follow-redirects@1.15.2 --bin-links=false --fund=false --omit=optional --omit=dev --package-lock=false --save=false
 	npm pack
 	mkdir -p nodejs/node_modules/@lidio601/chromium/
 	tar --directory nodejs/node_modules/@lidio601/chromium/ --extract --file lidio601-chromium-*.tgz --strip-components=1

@@ -7,10 +7,10 @@ exports.handler = async (event, context) => {
   let browser = null;
 
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath,
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
@@ -36,12 +36,14 @@ exports.handler = async (event, context) => {
           }
 
           if (job.expected.hasOwnProperty('screenshot') === true) {
-            if (job.expected.hasOwnProperty('remove') === true ) {
+            if (job.expected.hasOwnProperty('remove') === true) {
               await page.evaluate((selector) => {
                 document.getElementById(selector).remove();
               }, job.expected.remove);
             }
-            ok(createHash('sha1').update((await page.screenshot()).toString('base64')).digest('hex') === job.expected.screenshot, `Screenshot assertion failed.`);
+            const screenshot = await page.screenshot();
+            // console.log(screenshot.toString('base64'), createHash('sha1').update(screenshot.toString('base64')).digest('hex'));
+            ok(createHash('sha1').update(screenshot.toString('base64')).digest('hex') === job.expected.screenshot, `Screenshot assertion failed.`);
           }
         }
       }
