@@ -8,7 +8,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { https } from "follow-redirects";
-import LambdaFS from "./lambdafs";
+import { LambdaFS } from "./lambdafs";
 import { join } from "node:path";
 import { URL } from "node:url";
 import { downloadAndExtract, isRunningInAwsLambda, isValidUrl } from "./helper";
@@ -349,7 +349,7 @@ class Chromium {
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
    * @default "new"
    */
-  public static set setHeadlessMode(value: boolean | "new") {
+  public static set headless(value: boolean | "new") {
     if (
       (typeof value === "string" && value !== "new") ||
       (typeof value !== "boolean" && typeof value !== "string")
@@ -376,7 +376,7 @@ class Chromium {
    * `false` will also skip the extract of the graphics driver, saving about a second during initial extract
    * @default true
    */
-  public static set setGraphicsMode(value: boolean) {
+  public static set graphics(value: boolean) {
     if (typeof value !== "boolean") {
       throw new Error(
         `Graphics mode must be a boolean, you entered '${value}'`
@@ -386,4 +386,4 @@ class Chromium {
   }
 }
 
-export = Chromium;
+export { Chromium };

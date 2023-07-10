@@ -4,7 +4,7 @@ import { basename, join } from 'node:path';
 import { extract } from 'tar-fs';
 import { createBrotliDecompress, createUnzip } from 'node:zlib';
 
-class LambdaFS {
+export class LambdaFS {
   /**
    * Decompresses a (tarballed) Brotli or Gzip compressed file and returns the path to the decompressed file/folder.
    *
@@ -80,4 +80,3 @@ class LambdaFS {
   }
 }
 
-export = LambdaFS;
