@@ -71,7 +71,7 @@ class Chromium {
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
    * @values true or "new"
    */
-  private static headlessMode: true | "new" = "new";
+  private static headlessMode: boolean | "new" = "new";
 
   /**
    * If true, the graphics stack and webgl is enabled,
@@ -230,9 +230,12 @@ class Chromium {
       "--no-zygote", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoZygote&ss=chromium
     ];
 
-    const headlessFlags = [
-      this.headless === "new" ? "--headless='new'" : "--headless",
-    ];
+    const headlessFlags =
+      this.headless === "new"
+        ? ["--headless='new'"]
+        : this.headless
+        ? ["--headless"]
+        : [];
 
     return [
       ...puppeteerFlags,
@@ -274,14 +277,14 @@ class Chromium {
     /**
      * If the `chromium` binary already exists in /tmp/chromium, return it.
      */
-    if (existsSync('/tmp/chromium') === true) {
-      for (const file of readdirSync('/tmp')) {
-        if (file.startsWith('core.chromium') === true) {
+    if (existsSync("/tmp/chromium") === true) {
+      for (const file of readdirSync("/tmp")) {
+        if (file.startsWith("core.chromium") === true) {
           unlinkSync(`/tmp/${file}`);
         }
       }
 
-      return Promise.resolve('/tmp/chromium');
+      return Promise.resolve("/tmp/chromium");
     }
 
     /**
@@ -325,7 +328,7 @@ class Chromium {
   }
 
   static get executablePath(): string {
-    return '/tmp/chromium'
+    return "/tmp/chromium";
   }
 
   /**
