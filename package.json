@@ -1,6 +1,6 @@
 {
   "name": "@lidio601/chromium",
-  "version": "114.0.5",
+  "version": "114.0.6",
   "description": "Chromium Binary for Serverless Platforms",
   "author": {
     "name": "Kyle McNally"
@@ -21,9 +21,10 @@
   "scripts": {
     "test": "make clean && make && make pretest && make test",
     "build": "rm -rf build && tsc -p tsconfig.json",
+    "bundle": "make layer/chromium-layer.zip",
     "postversion": "git push && git push --tags && npm publish",
     "prepack": "npm run build",
-    "preversion": "npm run build"
+    "preversion": "npm run bundle"
   },
   "bugs": {
     "url": "https://github.com/lidio601/chromium/issues"
