@@ -349,13 +349,13 @@ class Chromium {
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
    * @default "new"
    */
-  public static set setHeadlessMode(value: true | "new") {
+  public static set setHeadlessMode(value: boolean | "new") {
     if (
       (typeof value === "string" && value !== "new") ||
-      (typeof value === "boolean" && value !== true)
+      (typeof value !== "boolean" && typeof value !== "string")
     ) {
       throw new Error(
-        `Headless mode must be either \`true\` or 'new', you entered '${value}'`
+        `Headless mode must be either \`boolean\` or 'new', you entered '${value}'`
       );
     }
     this.headlessMode = value;
