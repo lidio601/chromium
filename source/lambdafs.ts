@@ -80,3 +80,4 @@ export class LambdaFS {
   }
 }
 
+export default LambdaFS;

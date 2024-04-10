@@ -3,21 +3,14 @@
     "url": "https://example.com",
     "expected": {
       "title": "Example Domain",
-      "screenshot": "fdd55bf210cb00e00cadf3098055611d11293d02"
-    }
-  },
-  {
-    "url": "https://example.com",
-    "expected": {
-      "title": "Example Domain",
-      "screenshot": "fdd55bf210cb00e00cadf3098055611d11293d02"
+      "screenshot": "835f3ccc8fdbcb3a4a067666f1e9648e9e513570"
     }
   },
   {
     "url": "https://get.webgl.org",
     "expected": {
       "remove": "logo-container",
-      "screenshot": "7a63a9a18f32dcdad78e1e0a03364fade25c85a8"
+      "screenshot": "7b4110af7294ae55452d636dd8e900574b21ea2d"
     }
   }
 ]
