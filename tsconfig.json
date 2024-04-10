@@ -1,18 +1,11 @@
 {
-  "extends": [
-    "@tsconfig/node16/tsconfig",
-    "@tsconfig/strictest"
-  ],
+  "extends": ["@tsconfig/node20/tsconfig", "@tsconfig/strictest"],
   "compilerOptions": {
     "declaration": true,
-    "lib": [
-      "dom"
-    ],
-		"module": "commonjs",
-    "target": "es2015",
-    "outDir": "build",
+    "lib": ["dom", "ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "build"
   },
-  "include": [
-    "source"
-  ]
+  "include": ["source"]
 }

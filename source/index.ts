@@ -11,7 +11,12 @@ import { https } from "follow-redirects";
 import { LambdaFS } from "./lambdafs";
 import { join } from "node:path";
 import { URL } from "node:url";
-import { downloadAndExtract, isRunningInAwsLambda, isValidUrl } from "./helper";
+import {
+  downloadAndExtract,
+  isRunningInAwsLambda,
+  isValidUrl,
+  isRunningInAwsLambdaNode20,
+} from "./helper";
 
 /** Viewport taken from https://github.com/puppeteer/puppeteer/blob/main/docs/api/puppeteer.viewport.md */
 interface Viewport {
@@ -48,17 +53,36 @@ interface Viewport {
 
 if (isRunningInAwsLambda()) {
   if (process.env["FONTCONFIG_PATH"] === undefined) {
-    process.env["FONTCONFIG_PATH"] = "/tmp/aws";
+    process.env["FONTCONFIG_PATH"] = "/tmp/fonts";
   }
 
   if (process.env["LD_LIBRARY_PATH"] === undefined) {
-    process.env["LD_LIBRARY_PATH"] = "/tmp/aws/lib";
+    process.env["LD_LIBRARY_PATH"] = "/tmp/al2/lib";
   } else if (
-    process.env["LD_LIBRARY_PATH"].startsWith("/tmp/aws/lib") !== true
+    process.env["LD_LIBRARY_PATH"].startsWith("/tmp/al2/lib") !== true
   ) {
     process.env["LD_LIBRARY_PATH"] = [
       ...new Set([
-        "/tmp/aws/lib",
+        "/tmp/al2/lib",
+        ...process.env["LD_LIBRARY_PATH"].split(":"),
+      ]),
+    ].join(":");
+  }
+}
+
+if (isRunningInAwsLambdaNode20()) {
+  if (process.env["FONTCONFIG_PATH"] === undefined) {
+    process.env["FONTCONFIG_PATH"] = "/tmp/fonts";
+  }
+
+  if (process.env["LD_LIBRARY_PATH"] === undefined) {
+    process.env["LD_LIBRARY_PATH"] = "/tmp/al2023/lib";
+  } else if (
+    process.env["LD_LIBRARY_PATH"].startsWith("/tmp/al2023/lib") !== true
+  ) {
+    process.env["LD_LIBRARY_PATH"] = [
+      ...new Set([
+        "/tmp/al2023/lib",
         ...process.env["LD_LIBRARY_PATH"].split(":"),
       ]),
     ].join(":");
@@ -71,7 +95,7 @@ class Chromium {
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
    * @values true or "new"
    */
-  private static headlessMode: boolean | "new" = "new";
+  private static headlessMode: boolean | "shell" = "shell";
 
   /**
    * If true, the graphics stack and webgl is enabled,
@@ -201,6 +225,7 @@ class Chromium {
       "--no-default-browser-check", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoDefaultBrowserCheck&ss=chromium
       "--no-pings", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoPings&ss=chromium
       "--single-process", // Needs to be single-process to avoid `prctl(PR_SET_NO_NEW_PRIVS) failed` error
+      "--font-render-hinting=none", // https://github.com/puppeteer/puppeteer/issues/2410#issuecomment-560573612
     ];
     const chromiumDisableFeatures = [
       "AudioServiceOutOfProcess",
@@ -217,9 +242,11 @@ class Chromium {
     ];
 
     // https://chromium.googlesource.com/chromium/src/+/main/docs/gpu/swiftshader.md
-    this.graphics
-      ? graphicsFlags.push("--use-gl=angle", "--use-angle=swiftshader")
-      : graphicsFlags.push("--disable-webgl");
+    // Blocked by https://github.com/Sparticuz/chromium/issues/247
+    //this.graphics
+    //  ? graphicsFlags.push("--use-gl=angle", "--use-angle=swiftshader")
+    //  : graphicsFlags.push("--disable-webgl");
+    graphicsFlags.push("--use-gl=angle", "--use-angle=swiftshader");
 
     const insecureFlags = [
       "--allow-running-insecure-content", // https://source.chromium.org/search?q=lang:cpp+symbol:kAllowRunningInsecureContent&ss=chromium
@@ -230,12 +257,11 @@ class Chromium {
       "--no-zygote", // https://source.chromium.org/search?q=lang:cpp+symbol:kNoZygote&ss=chromium
     ];
 
-    const headlessFlags =
-      this.headless === "new"
-        ? ["--headless='new'"]
+    const headlessFlags: string[] = this.headless === "shell" 
+        ? ["--headless='shell'"] 
         : this.headless
-        ? ["--headless"]
-        : [];
+          ? ["--headless"]
+          : []
 
     return [
       ...puppeteerFlags,
@@ -311,14 +337,20 @@ class Chromium {
     }
 
     // Extract the required files
-    const promises = [LambdaFS.inflate(`${input}/chromium.br`)];
+    const promises = [
+      LambdaFS.inflate(`${input}/chromium.br`),
+      LambdaFS.inflate(`${input}/fonts.tar.br`),
+    ];
     if (this.graphics) {
       // Only inflate graphics stack if needed
       promises.push(LambdaFS.inflate(`${input}/swiftshader.tar.br`));
     }
     if (isRunningInAwsLambda()) {
       // If running in AWS Lambda, extract more required files
-      promises.push(LambdaFS.inflate(`${input}/aws.tar.br`));
+      promises.push(LambdaFS.inflate(`${input}/al2.tar.br`));
+    }
+    if (isRunningInAwsLambdaNode20()) {
+      promises.push(LambdaFS.inflate(`${input}/al2023.tar.br`));
     }
 
     // Await all extractions
@@ -333,10 +365,10 @@ class Chromium {
 
   /**
    * Returns the headless mode.
-   * `true` means the 'old' (legacy, chromium < 112) headless mode.
-   * "new" means the 'new' headless mode.
+   * "shell" means the 'old' (legacy, chromium < 112) headless mode.
+   * `true` means the 'new' headless mode.
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
-   * @returns true | "new"
+   * @returns true | "shell"
    */
   public static get headless() {
     return this.headlessMode;
@@ -344,18 +376,18 @@ class Chromium {
 
   /**
    * Sets the headless mode.
-   * `true` means the 'old' (legacy, chromium < 112) headless mode.
-   * "new" means the 'new' headless mode.
+   * "shell" means the 'old' (legacy, chromium < 112) headless mode.
+   * `true` means the 'shell' headless mode.
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
-   * @default "new"
+   * @default "shell"
    */
-  public static set headless(value: boolean | "new") {
+  public static set headless(value: boolean | "shell") {
     if (
-      (typeof value === "string" && value !== "new") ||
+      (typeof value === "string" && value !== "shell") ||
       (typeof value !== "boolean" && typeof value !== "string")
     ) {
       throw new Error(
-        `Headless mode must be either \`boolean\` or 'new', you entered '${value}'`
+        `Headless mode must be either \`boolean\` or 'shell', you entered '${value}'`
       );
     }
     this.headlessMode = value;
