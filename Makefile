@@ -1,7 +1,7 @@
 .PHONY: clean
 
 clean:
-	rm -rf chromium.zip _/amazon/code/nodejs _/amazon/handlers/node_modules
+	rm -rf layer/chromium-layer.zip _/amazon/code/nodejs _/amazon/handlers/node_modules lidio601-chromium-*.tgz nodejs build
 
 pretest:
 	unzip chromium.zip -d _/amazon/code
@@ -18,14 +18,14 @@ test18:
 
 %.zip:
 	npm install --fund=false --package-lock=false
-	npm run build
+	npx tsc -p tsconfig.json
 	mkdir -p nodejs
 	npm install --prefix nodejs/ tar-fs@3.0.5 follow-redirects@1.15.6 --bin-links=false --fund=false --omit=optional --omit=dev --package-lock=false --save=false
-	npm pack
 	mkdir -p nodejs/node_modules/@lidio601/chromium/
-	tar --directory nodejs/node_modules/@lidio601/chromium/ --extract --file lidio601-chromium-*.tgz --strip-components=1
+	# npm pack
+	# tar --directory nodejs/node_modules/@lidio601/chromium/ --extract --file lidio601-chromium-*.tgz --strip-components=1
+	cp -Rfvp bin build LICENSE package.json Dockerfile README.md nodejs/node_modules/@lidio601/chromium/
 	npx clean-modules --directory nodejs "**/*.d.ts" "**/@types/**" "**/*.@(yaml|yml)" --yes
-	rm lidio601-chromium-*.tgz
 	mkdir -p $(dir $@)
 	zip -9 --filesync --move --recurse-paths $@ nodejs
 

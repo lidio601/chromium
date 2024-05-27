@@ -16,15 +16,13 @@
   "files": [
     "bin",
     "build",
-    "layer"
+    "Dockerfile"
   ],
   "scripts": {
     "test": "make clean && make && make pretest && make test",
-    "build": "rm -rf build && tsc -p tsconfig.json",
-    "bundle": "rm -fv layer/chromium-layer.zip && make layer/chromium-layer.zip",
-    "postversion": "git push && git push --tags && npm publish",
-    "prepack": "npm run build",
-    "preversion": "npm run bundle"
+    "clean": "make clean",
+    "build": "make layer/chromium-layer.zip",
+    "postversion": "git push && git push --tags && npm publish"
   },
   "bugs": {
     "url": "https://github.com/lidio601/chromium/issues"
