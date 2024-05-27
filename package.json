@@ -1,6 +1,6 @@
 {
   "name": "@lidio601/chromium",
-  "version": "123.1.3",
+  "version": "123.1.4",
   "description": "Chromium Binary for Serverless Platforms",
   "author": {
     "name": "Kyle McNally"
