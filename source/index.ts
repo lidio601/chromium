@@ -93,7 +93,7 @@ class Chromium {
   /**
    * Determines the headless mode that chromium will run at
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
-   * @values true or "new"
+   * @values true or "shell"
    */
   private static headlessMode: boolean | "shell" = "shell";
 
@@ -366,7 +366,7 @@ class Chromium {
   /**
    * Returns the headless mode.
    * "shell" means the 'old' (legacy, chromium < 112) headless mode.
-   * `true` means the 'new' headless mode.
+   * `true` means the 'shell' headless mode.
    * https://developer.chrome.com/articles/new-headless/#try-out-the-new-headless
    * @returns true | "shell"
    */
