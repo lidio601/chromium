@@ -1,6 +1,6 @@
 {
   "name": "@lidio601/chromium",
-  "version": "123.1.5",
+  "version": "127.0.0",
   "description": "Chromium Binary for Serverless Platforms",
   "author": {
     "name": "Kyle McNally"
@@ -45,16 +45,16 @@
   "type": "commonjs",
   "dependencies": {
     "follow-redirects": "^1.15.6",
-    "tar-fs": "^3.0.5"
+    "tar-fs": "^3.0.6"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "@tsconfig/strictest": "^2.0.5",
     "@types/follow-redirects": "^1.14.4",
-    "@types/node": "^20.12.3",
+    "@types/node": "^20.16.1",
     "@types/tar-fs": "^2.0.4",
     "clean-modules": "^3.0.5",
-    "typescript": "^5.4.3"
+    "typescript": "^5.5.4"
   },
   "engines": {
     "node": ">= 16"
